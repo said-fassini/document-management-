@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // الرئيس، المدير العام، المكتب الإداري، الخدمة
     ];
 
     /**
@@ -44,4 +45,26 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relationship with AuditLog model
+     */
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
+    /**
+     * Relationship with Workflow model
+     */
+    public function workflows()
+    {
+        return $this->hasMany(Workflow::class);
+    }
 }
+
+
+
+
+
+

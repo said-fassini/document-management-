@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('documents', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('description');
+            $table->string('file_path');
+            $table->foreignId('sender_id')->constrained('users'); // يُرسل من مستخدم معين
+            $table->foreignId('receiver_id')->nullable()->constrained('users'); // يُستقبل من مستخدم معين
+            $table->boolean('archived')->default(false); // لحفظ حالة الأرشفة
+            $table->timestamps();
+        });
+        
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('documents');
+    }
+};
