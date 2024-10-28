@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PresidentController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;  
 
+ 
 // Define the route for the home dashboard
 Route::get('/', [PresidentController::class, 'home'])->name('home');
 
@@ -12,3 +14,13 @@ Route::get('/view-docs', [PresidentController::class, 'viewDocuments'])->name('p
 Route::get('/view-services', [PresidentController::class, 'viewServices'])->name('president.view-Services');
 Route::get('/view-actions', [PresidentController::class, 'viewActions'])->name('president.view-Actions');
 Route::post('/president/store-user', [PresidentController::class, 'storeUser'])->name('president.storeUser');
+
+
+
+Route::get('/president/dashboard', [PresidentController::class, 'index'])->name('president.dashboard');
+
+
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');  
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);  
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+

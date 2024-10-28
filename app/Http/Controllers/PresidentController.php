@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+
 
 class PresidentController extends Controller
 {
@@ -106,7 +108,10 @@ class PresidentController extends Controller
         $actions = DB::table('audit_logs')->orderBy('created_at', 'desc')->get();
         return view('president.view-actions', ['actions' => $actions]);
     }
-
+    public function index()
+    {
+        return view('president.dashboard');
+    }
 
 
 }
