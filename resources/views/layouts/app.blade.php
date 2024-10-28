@@ -177,7 +177,11 @@ h1:hover, h2:hover {
     <!-- Main Content -->
     <div class="content">
         <div class="header">
-            <button class="logout-button">Logout</button>
+           
+                <form method="POST" action="{{ route('logout') }}">
+                     @csrf
+                    <button type="submit" class="logout-button">Logout</button>
+                </form>
         </div>
         @yield('content')
     </div>

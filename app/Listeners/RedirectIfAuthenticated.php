@@ -24,7 +24,7 @@ class RedirectIfAuthenticated
 
         switch ($user->role) {
             case 'President':
-                return redirect('/president/dashboard')->send();
+                return redirect('/president/home')->send();
             case 'Bureau dOrdre':
                 return redirect('/bo/home')->send();
             case 'Service':

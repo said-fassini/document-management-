@@ -13,6 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use App\Models\User;
+use App\Providers\Auth;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;  
 
 class FortifyServiceProvider extends ServiceProvider
