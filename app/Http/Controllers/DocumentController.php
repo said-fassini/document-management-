@@ -13,5 +13,8 @@ class UserController extends Controller
     $documents = Document::all(); // Fetch all documents or add any specific conditions
     return view('president.view_docs', compact('documents'));
 }
-
+    public function create()
+    {
+        
+    }
 }

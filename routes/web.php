@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PresidentController;
+use App\Http\Controllers\BureauController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;  
 
  
@@ -24,3 +25,16 @@ Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login'
 Route::post('/', [AuthenticatedSessionController::class, 'store']);  
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+// routes/web.php
+
+
+Route::middleware(['auth'])->prefix('bureau')->group(function () {
+    Route::get('/home', [BureauController::class, 'home'])->name('bureau.home');
+    Route::get('/received', [BureauController::class, 'received'])->name('bureau.received');
+    Route::post('/received', [BureauController::class, 'received'])->name('bureau.received');
+    Route::post('/download/{id}', [BureauController::class, 'download'])->name('bureau.download');
+    Route::post('/forward/{id}', [BureauController::class, 'forward'])->name('bureau.forward');
+    //Route::get('/archive', [BureauController::class, 'archive'])->name('bureau.archive');
+     Route::get('/bureau/archive', [BureauController::class, 'showArchive'])->name('bureau.archive');
+
+});

@@ -1,14 +1,13 @@
-
-
-
+{{-- resources/views/layouts/app.blade.php --}}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title')</title>
-    @include('president.sidebar')
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+</head>
+<body>
     <style>
+        
  /* resources/css/dashboard.css */
 
 body {
@@ -172,20 +171,31 @@ h1:hover, h2:hover {
 }
 
     </style>
-</head>
-<body>
-    <!-- Main Content -->
+
+    </style>
+    <div class="header">
+        <button class="logout-button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            Logout
+        </button>
+    </div>
+
+    <div class="sidebar">
+        @if (auth()->check() && auth()->user()->role === 'President')
+            @include('president.sidebar')
+        @elseif (auth()->check() && auth()->user()->role === "Bureau dOrdre")
+            @include('bureau.sidebar')
+        @else
+            <p>No sidebar available for this role.</p>
+        @endif
+    </div>
+
     <div class="content">
-        <div class="header">
-           
-                <form method="POST" action="{{ route('logout') }}">
-                     @csrf
-                    <button type="submit" class="logout-button">Logout</button>
-                </form>
-        </div>
         @yield('content')
     </div>
 
-    @yield('scripts')
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+    
 </body>
 </html>

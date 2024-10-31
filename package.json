@@ -7,5 +7,9 @@
     },
     "devDependencies": {
         "axios": "^1.7.4"
+    },
+    "dependencies": {
+        "@fullcalendar/core": "^6.1.15",
+        "@fullcalendar/daygrid": "^6.1.15"
     }
 }

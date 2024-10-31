@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
                 case 'General Director':  
                     return redirect()->route('dgs.dashboard'); // Editor dashboard  
                 case 'Bureau dOrdre':  
-                    return redirect()->route('bo.dashboard'); // Editor dashboard  
+                    return redirect()->route('bureau.home'); // Editor dashboard  
                 default:  
                     return redirect()->route('welcome'); // Default user dashboard  
             }  

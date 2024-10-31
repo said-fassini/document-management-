@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description');
-            $table->string('file_path');
+            $table->binary('pdf_content')->nullable(); // Change to store PDF binary data directly
             $table->foreignId('sender_id')->constrained('users'); // يُرسل من مستخدم معين
             $table->foreignId('receiver_id')->nullable()->constrained('users'); // يُستقبل من مستخدم معين
             $table->boolean('archived')->default(false); // لحفظ حالة الأرشفة
             $table->timestamps();
         });
-        
     }
 
     /**
@@ -32,7 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('documents');
     }
 };
-
-
-
-
