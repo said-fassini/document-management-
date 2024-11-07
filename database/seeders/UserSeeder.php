@@ -11,32 +11,34 @@ class UserSeeder extends Seeder
     {
            {
                 User::create([
-                    'name' => 'President',
-                    'email' => 'president21@gmail.com',
+                    'name' => 'President3',
+                    'email' => 'president3@gmail.com',
                     'password' => bcrypt('qwerty123456789'),
                     'role' => 'President',
                 ]);
         
                 User::create([
-                    'name' => 'General Director',
-                    'email' => 'director12@gmail.com',
+                    'name' => 'General Director12',
+                    'email' => 'director13@gmail.com',
                     'password' => bcrypt('qwerty123456789'),
                     'role' => 'General Director',
                 ]);
         
                 User::create([
-                    'name' => 'Bureau dOrdre',
-                    'email' => 'bureau53@example.com',
+                    'name' => 'Bureau dOrdre3',
+                    'email' => 'bureau23@example.com',
                     'password' => bcrypt('qwerty123456789'),
                     'role' => 'Bureau dOrdre',
                 ]);
         
                 User::create([
-                    'name' => 'Service User',
-                    'email' => 'servic51e@gmail.com',
+                    'name' => 'Service User3',
+                    'email' => 'service13@gmail.com',
                     'password' => bcrypt('qwerty123456789'),
                     'role' => 'Service',
                 ]);
+            
+               
             }
         }
         

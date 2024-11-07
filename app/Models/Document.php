@@ -17,7 +17,7 @@ class Document extends Model
     protected $fillable = [
         'title',
         'description',
-        'file_data',    // Store file data in the database
+        'file_path',    // Store file data in the database
         'sender_id',
         'receiver_id',
         'status',       // Stores the document's status
@@ -38,12 +38,15 @@ class Document extends Model
      */
     public function sender()
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->belongsTo(User::class, 'sender_id');    
+
     }
+    
 
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'receiver_id');
+        return $this->belongsTo(User::class, 'receiver_id'); 
+
     }
 
     /**

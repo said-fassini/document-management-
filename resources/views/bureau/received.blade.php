@@ -13,21 +13,55 @@
     </form>
 
     <!-- Document List -->
-    <div class="documents-list">
-        @if($documents->isEmpty())
-            <p>No documents found.</p>
-        @else
-            @foreach($documents as $document)
-                <div class="document-card">
-                    <h3>{{ $document->title }}</h3>
-                    <p>{{ $document->content }}</p>
+<div class="documents-list">
+    @if($documents->isEmpty())
+        <p>No documents found.</p>
+    @else
+        @foreach($documents as $document)
+            <div class="document-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px;">
+                <h3>{{ $document->title }}</h3>
+                    <p>description is '{{ $document->description }}'</p>
                     <p>Received on: {{ $document->created_at->format('Y-m-d') }}</p>
-                    <p>Receiver: {{ $document->receiver }}</p>
-                </div>
-            @endforeach
-        @endif
-    </div>
+                    <p>Receiver: {{ $document->receiver->name }}</p>
+                    <p>statue: {{ $document->status }}</p>
+
+                <!-- زر التحميل -->
+                <form action="{{ route('bureau.download', $document->id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">Download</button>
+                </form>
+
+                <!-- زر إعادة التوجيه -->
+                <form action="{{ route('bureau.forward', $document->id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary">Forward to General Director</button>
+                </form>
+            </div>
+        @endforeach
+    @endif
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <style>
     /* Styles for the search form */

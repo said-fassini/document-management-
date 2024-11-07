@@ -1,10 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Document;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage; // For file handling
+use Illuminate\Support\Facades\Log;  // Add this at the top of the controller
+use Illuminate\Support\Facades\DB;
+
 
 class BureauController extends Controller
 {
@@ -12,100 +17,216 @@ class BureauController extends Controller
     public function home()
     {
         $userId = Auth::id();
-
-        // Fetch all documents that are pending for display on the dashboard
-        $pendingDocuments = Document::where('status', Document::STATUS_PENDING)->get();
-
-        // Count of new (unread) documents to show as notifications
+    
+        // Fetch all pending documents that have been received by the Bureau d'Ordre (user)
+        $pendingDocuments = Document::where('receiver_id', $userId)
+                                    ->where('status', 'pending')
+                                    ->orderBy('created_at', 'desc')
+                                    ->get();
+    
+        // Count of unread documents for the Bureau d'Ordre
         $newDocCount = Document::where('receiver_id', $userId)
-                                ->where('status', 'unread') // Ensure status is 'unread' for new docs
-                                ->count();
-
-        return view('bureau.home', compact('pendingDocuments', 'newDocCount'));
+                               ->where('status', 'pending')
+                               ->count();
+    
+        // Count of received documents by each service (role) for the Google Chart
+        $serviceStats = Document::join('users', 'documents.sender_id', '=', 'users.id')
+                                ->where('documents.receiver_id', $userId)
+                                ->selectRaw('users.role as sender_role, COUNT(*) as received_count')
+                                ->groupBy('users.role')
+                                ->pluck('received_count', 'sender_role')
+                                ->toArray();
+    
+        return view('bureau.home', compact('pendingDocuments', 'newDocCount', 'serviceStats'));
     }
+    
 
-    // Display received documents for Bureau d'Ordre with unread notifications
-    public function received()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    // Display received documents for Bureau d'Ordre
+    
+public function received()
+{
+    $userId = Auth::id();
+
+    // Log the user ID for clarity
+    Log::info("Current User ID: " . $userId);
+
+    // Enable query logging
+    DB::enableQueryLog();
+
+    // Fetch documents received by the Bureau d'Ordre with 'pending' status
+    $documents = Document::where('receiver_id', $userId)
+                         ->where('status','!=', 'forwarded')
+                         ->get();
+
+    // Log the executed query
+    Log::info("Executed Query: ", ['query' => DB::getQueryLog()]);
+
+    // Log the fetched documents to check if any records are returned
+    Log::info("Fetched Documents: ", ['documents' => $documents]);
+
+    // Count of unread documents
+    $unreadCount = $documents->count();
+
+    // Log the unread count
+    Log::info("Unread Documents Count: " . $unreadCount);
+
+    // Return the view with the fetched data
+    return view('bureau.received', compact('documents', 'unreadCount'));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Download the document and change its status to 'read by Bureau d'Ordre'
+    public function download($id)
     {
-        $userId = Auth::id();
-
-        // Retrieve only unread documents assigned to Bureau d'Ordre
-        $documents = Document::where('receiver_id', $userId)
-                             ->where('status', Document::STATUS_PENDING)
-                             ->get();
-
-        // Count unread documents for notification
-        $unreadCount = $documents->count();
-
-        return view('bureau.received', compact('documents', 'unreadCount'));
-    }
-
-    // Forward document to the Director General after download
-    public function forwardDocument($id)
-    {
-        // Fetch the document and verify it exists
         $document = Document::findOrFail($id);
 
-        // Check if document was downloaded (archived) before forwarding
-        if ($document->status !== Document::STATUS_ARCHIVED) {
+        // Check if the logged-in user is authorized to download
+        if (Auth::id() == $document->receiver_id) {
+            // Update status to "read by Bureau d'Ordre"
+            $document->update(['status' => 'read by Bureau d\'Ordre']);
+
+            return Storage::disk('public')->download($document->file_path, $document->title);
+        }
+
+        return redirect()->back()->withErrors('Unauthorized access.');
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // Forward the document to the General Director
+    public function forward($id)
+    {
+        $document = Document::findOrFail($id);
+
+        // Check if document is marked as archived before forwarding
+        if ($document->status !== 'read by Bureau d\'Ordre') {
             return redirect()->route('bureau.received')
                              ->withErrors('Document must be downloaded before forwarding.');
         }
 
-        // Forward to Director General; assuming Director General's user ID is 1
-        $document->receiver_id = 1;
-        $document->status = Document::STATUS_PENDING;
+        // Forward document to the Director General (role "General Director")
+        $document->receiver_id = User::where('role', 'General Director')->first()->id;
+        $document->status = 'forwarded to dgs';
         $document->save();
 
-        return redirect()->route('bureau.received')->with('status', 'Document forwarded to Director General.');
+        return redirect()->route('bureau.received')->with('status', 'Document forwarded to General Director.');
     }
+
+
+    // public function forward(Request $request, $id)
+    // {
+    //     // Get the authenticated user and ensure it's the Bureau d'Ordre
+    //     $userId = Auth::id();
+    //     $userRole = Auth::user()->role;
+    
+    //     if ($userRole !== 'Bureau dOrdre') {
+    //         return redirect()->back()->withErrors('Only the Bureau dOrdre can forward documents.');
+    //     }
+    
+    //     // Find the document by ID
+    //     $document = Document::findOrFail($id);
+    
+    //     // Check if the document is eligible for forwarding
+    //     if ($document->status !== 'pending') {
+    //         return redirect()->back()->withErrors('The document has already been processed.');
+    //     }
+    
+    //     // Change the status of the document to 'forwarded'
+    //     $document->status = 'forwarded';
+    
+    //     // Update the receiver to the Directeur Général (assuming you have a way to identify them)
+    //     $generalDirector = User::where('role', 'Directeur Général')->first();
+    //     if (!$generalDirector) {
+    //         return redirect()->back()->withErrors('Error: Directeur Général user not found.');
+    //     }
+    
+    //     $document->receiver_id = $generalDirector->id;
+    //     $document->save();
+    
+    //     return redirect()->route('bureau.received')->with('success', 'Document has been forwarded successfully.');
+    // }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    // Show the archive page for Bureau d'Ordre
+    public function showArchive(Request $request)
+    {
+        // Search functionality
+        $documentss = Document::when($request->filled('search'), function ($query) use ($request) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%')
+                  ->orWhereDate('created_at', $request->search);
+            });
+        })
+        ->get();
+
+        return view('bureau.archive', compact('documentss'));
+    }
+
+
+
+
 
     // Archive document after download
     public function archiveDocument($id)
     {
-        // Find and archive the document, marking as downloaded
         $document = Document::findOrFail($id);
-        $document->status = Document::STATUS_ARCHIVED;
+        $document->status = 'archived';
         $document->archived = true;
         $document->save();
 
         return redirect()->route('bureau.archive')->with('status', 'Document archived successfully.');
     }
-
-   
-
-    // Update status of document to 'read' when it's opened
-    public function markAsRead($id)
-    {
-        $document = Document::findOrFail($id);
-
-        // Mark document as read for tracking
-        $document->status = Document::STATUS_READ;
-        $document->save();
-
-        return redirect()->route('bureau.received')->with('status', 'Document marked as read by BO.');
-    }
-    //the archive methode
-
-    
-    public function showArchive(Request $request)
-{
-    // Filter documents based on user name, title, content, and creation date
-    $documents = Document::when($request->filled('search'), function ($query) use ($request) {
-        $query->where(function ($q) use ($request) {
-            $q->where('title', 'like', '%' . $request->search . '%')
-              ->orWhere('description', 'like', '%' . $request->search . '%')
-              ->orWhereDate('created_at', $request->search);
-        });
-    })
-    ->get();
-
-    return view('bureau.archive', compact('documents'));
-}
-
-
-    
-        // Additional methods for the Bureau d'Ordre
-    
-    
 }

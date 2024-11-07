@@ -182,8 +182,11 @@ h1:hover, h2:hover {
     <div class="sidebar">
         @if (auth()->check() && auth()->user()->role === 'President')
             @include('president.sidebar')
-        @elseif (auth()->check() && auth()->user()->role === "Bureau dOrdre")
+        @elseif (auth()->check() && auth()->user()->role === "Bureau dOrdre") Bureau dOrdre
             @include('bureau.sidebar')
+    
+        @elseif (auth()->check() && auth()->user()->role === "Service")
+            @include('service.Sidebar')
         @else
             <p>No sidebar available for this role.</p>
         @endif

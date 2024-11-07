@@ -78,7 +78,9 @@ class PresidentController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'password' => bcrypt('default_password'), // تعيين كلمة مرور افتراضية، يمكن تعديلها لاحقاً
+            //'password' => bcrypt(''), // تعيين كلمة مرور افتراضية، يمكن تعديلها لاحقاً
+            'password' => bcrypt($request->input('password')), // Or another way to set a secure password
+
         ]);
     
         // إعادة التوجيه مع رسالة نجاح

@@ -1,5 +1,3 @@
-<!-- resources/views/bureau/archive.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
@@ -13,17 +11,30 @@
     </form>
 
     <!-- Archive Results -->
-    @if($documents->isEmpty())
+    @if($documentss->isEmpty())
         <p>No documents found.</p>
     @else
-        @foreach($documents as $document)
-            <div class="document-card">
-                <h3>{{ $document->title }}</h3>
-                <p>{{ $document->content }}</p>
-                <p>Date: {{ $document->created_at->format('Y-m-d') }}</p>
-                <!-- Additional details can be added here -->
-            </div>
-        @endforeach
+        <div class="row">
+            @foreach($documentss as $document)
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="border: 1px solid #ccc; padding: 15px;">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ $document->title }}</h3>
+                            <p>{{ $document->description }}</p>
+                            <p><strong>Status:</strong> {{ $document->status }}</p> <!-- Display the status -->
+
+                            <p>Date: {{ $document->created_at->format('Y-m-d') }}</p>
+                            
+                            <!-- Download button -->
+                            <form action="{{ route('bureau.download', $document->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="btn btn-primary">Download</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
     @endif
 </div>
 @endsection

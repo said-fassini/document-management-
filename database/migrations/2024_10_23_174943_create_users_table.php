@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password'); // User's password
             $table->rememberToken(); // Token for "remember me" functionality
             $table->string('role')->default('User'); // Default role if none is provided
-             // User role (e.g., president, director general, bureau order)
+             // User role (service, president, director general, bureau order)
             $table->timestamps(); // Created at and updated at timestamps
         });
     }

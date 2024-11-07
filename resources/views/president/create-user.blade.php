@@ -23,9 +23,9 @@
         <div class="form-group">
             <label for="role">Role:</label>
             <select id="role" name="role" required>
-                <option value="service">Service</option>
-                <option value="director">Director</option>
-                <option value="admin">bereau dorer</option>
+                <option value="Service">Service</option>
+                <option value="General Director">Director</option>
+                <option value="Bureau dOrdre">bereau dorder</option>
             </select>
         </div>
         <button type="submit" class="submit-button">Create User</button>

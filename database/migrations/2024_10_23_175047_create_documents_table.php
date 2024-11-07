@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description');
-            $table->binary('pdf_content')->nullable(); // Change to store PDF binary data directly
             $table->foreignId('sender_id')->constrained('users'); // يُرسل من مستخدم معين
             $table->foreignId('receiver_id')->nullable()->constrained('users'); // يُستقبل من مستخدم معين
             $table->boolean('archived')->default(false); // لحفظ حالة الأرشفة
+            $table->string('status')->default("pending"); // لحفظ حالة الأرشفة
+        
             $table->timestamps();
         });
     }

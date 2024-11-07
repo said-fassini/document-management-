@@ -1,136 +1,65 @@
-<!-- resources/views/bureau/home.blade.php -->
-
-@extends('layouts.app')
+@extends('layouts.app') <!-- Ensure this layout exists and has @yield('content') -->
 
 @section('content')
+    
 <div class="container">
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+    <!-- Section: Recently Received Documents -->
+    <h2>Recently Received Documents</h2>
+    @if($pendingDocuments->count())
+        <div class="row">
+            @foreach($pendingDocuments as $document)
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $document->title }}</h5>
+                            <p class="card-text">Sender: {{ $document->sender->name }}</p>
+                            <p class="card-text"><small class="text-muted">Received {{ $document->created_at->diffForHumans() }}</small></p>
+                            <a href="{{ route('bureau.received', ['id' => $document->id]) }}" class="btn btn-primary">View Document</a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <p>No pending documents.</p>
+    @endif
 
-    <!-- Notification Card for New Documents -->
-    <div class="notification-card animated-card">
-        <h2>New Documents</h2>
-        <p>You have {{ $newDocCount }} new document(s) received.</p>
-        @if ($newDocCount > 0)
-            <a href="{{ route('bureau.received') }}" class="btn">View Received Documents</a>
-        @else
-            <p>No new documents.</p>
-        @endif
-    </div>
+    <!-- Section: New Unread Document Count -->
+    <p>New Unread Documents: {{ $newDocCount }}</p>
 
-    <!-- Pending Documents Section -->
-    <div class="notification-card animated-card">
-        <h2>Pending Documents</h2>
-        @foreach($pendingDocuments as $document)
-            <div class="document-card" data-id="{{ $document->id }}">
-                <h3>{{ $document->title }}</h3>
-                <p>{{ $document->content }}</p>
-                <p>Status: {{ $document->status }}</p>
-                <button class="delete-button" data-id="{{ $document->id }}">Delete</button> <!-- Button to delete document -->
-                <a href="{{ route('bureau.received', ['document_id' => $document->id]) }}" class="btn">View Document</a> <!-- Link to received documents -->
-            </div>
-        @endforeach
-    </div>
-    @foreach($pendingDocuments as $document)
-    <div class="document-card">
-        <h3>{{ $document->title }}</h3>
-        <p>{{ $document->content }}</p>
-        <p>Status: {{ $document->status }}</p>
-        <a href="{{ route('bureau.received', ['document_id' => $document->id]) }}" class="btn">View Document</a> <!-- Link to received documents -->
-        <button class="delete-button" data-id="{{ $document->id }}">Delete</button> <!-- Button to delete document -->
-    </div>
-@endforeach
+    <!-- Section: Google Chart for Received Documents -->
+    <div id="chart_div" style="height: 500px;"></div>
 
 
 
 
 
-    <!-- Notes Section -->
-    <div class="notes-section">
-        <h2>Notes for <span id="selectedDate"></span></h2>
-        <input id="noteInput" placeholder="Add your note and press Enter..." class="notes-input"/>
-    </div>
 
-    <!-- Calendar Section -->
-    <div class="calendar-container">
-        <h2>Calendar</h2>
-        <div id="calendar"></div>
-    </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var noteInput = document.getElementById('noteInput');
-        var selectedDateDisplay = document.getElementById('selectedDate');
-        var currentDate; // To store the currently selected date
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            dateClick: function(info) {
-                currentDate = info.dateStr; // Get the selected date
-                selectedDateDisplay.textContent = currentDate; // Update displayed date
-                noteInput.value = ''; // Clear the input for new note
-                noteInput.placeholder = "Write a note for " + currentDate; // Update placeholder
-                noteInput.focus(); // Focus on the input
-            },
-            events: [
-                // Example events; you can fetch events from your backend
-                // { title: 'Note for Date', date: '2024-10-30' }
-            ]
-        });
 
-        calendar.render();
 
-        // Save note functionality on Enter
-        noteInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                var note = noteInput.value;
-                if (note) {
-                    // Add the note to the calendar
-                    calendar.addEvent({
-                        title: note,
-                        start: currentDate,
-                        allDay: true
-                    });
-                    noteInput.value = ''; // Clear input after saving
-                    alert('Note saved for ' + currentDate);
-                } else {
-                    alert('Please enter a note to save.');
-                }
-            }
-        });
 
-        // Handle document deletion
-        document.querySelectorAll('.delete-button').forEach(button => {
-            button.addEventListener('click', function() {
-                var docCard = this.closest('.document-card');
-                var docId = docCard.getAttribute('data-id');
-                // Implement AJAX request to delete the document from the database
-                // For demo, we just remove the card from the DOM
-                docCard.remove();
-                alert('Document with ID ' + docId + ' deleted.'); // You can replace this with actual AJAX handling
-            });
-        });
 
-        // Handle document viewing
-        document.querySelectorAll('.view-button').forEach(button => {
-            button.addEventListener('click', function() {
-                var docCard = this.closest('.document-card');
-                var docId = docCard.getAttribute('data-id');
-                // Redirect to the received documents page
-                window.location.href = "{{ route('bureau.received') }}?document_id=" + docId;
-                // Optionally, remove the card from the homepage after redirect
-                // docCard.remove();
-            });
-        });
-    });
-</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <style>
     /* Styles for the body */
