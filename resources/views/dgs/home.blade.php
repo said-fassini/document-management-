@@ -15,7 +15,7 @@
                                             <h5 class="card-title">{{ $document->title }}</h5>
                                     <p class="card-text">Sender: {{ $document->sender->name }}</p>
                                     <p class="card-text"><small class="text-muted">Received {{ $document->created_at->diffForHumans() }}</small></p>
-                                    <a href="{{ route('bureau.received', ['id' => $document->id]) }}" class="btn btn-primary">View Document</a>
+                                    <a href="{{ route('dgs.received', ['id' => $document->id]) }}" class="btn btn-primary">View Document</a>
                                 </div>
                             </div>
                         </div>

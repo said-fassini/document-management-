@@ -5,19 +5,27 @@
 
     <style>
         /* Table Styles */
+        .document-table {
+        max-width: 90%;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #ffffff83;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        animation: fadeIn 1s ease-out;
+    }
         table {
             width: 100%;
-            border-collapse: collapse; /* Removes space between borders */
-            margin-top: 20px; /* Spacing above the table */
-            border-radius: 8px; /* Rounded corners */
-            overflow: hidden; /* Hides overflow for rounded corners */
-        }
+            border-collapse: collapse;
+            font-size: 1.1em;
+            min-width: 600px;
+            transition: all 0.3s ease;
+    }
 
         th, td {
-            padding: 15px; /* Spacing inside table cells */
-            text-align: left; /* Align text to the left */
-            border-bottom: 1px solid #444; /* Darker border for rows */
-            color: #dcdcdc; /* Light text color for contrast */
+            padding: 12px 20px;
+            border-bottom: 1px solid #dddddd;
         }
 
         th {
@@ -26,22 +34,38 @@
             text-transform: uppercase; /* Uppercase letters for header */
             letter-spacing: 1px; /* Spacing between letters */
         }
+         td {
+        font-size: 1em;
+        color: #ffffff;
+    }
 
+    tr {
+        background:rgb(65, 68, 108) ;
+        color: #fff;
+        text-align: left;
+        font-weight: bold;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    }
         tr:hover {
-            background-color: #4c6b8f; /* Highlight row on hover */
-            transition: background-color 0.3s ease; /* Smooth transition */
+            transform: scale(1.02);
+            cursor: pointer;            
         }
 
         tr:nth-child(even) {
-            background-color: #2a3b4d; /* Alternate row color for even rows */
+            background: #414ac463; 
         }
 
         h1 {
-            color: #ffffff; /* Light text for heading */
-            margin-bottom: 20px; /* Spacing below heading */
+            font-size: 2.5em;
+            color: rgb(65, 68, 108) ;
+            margin-bottom: 25px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: center;
         }
     </style>
-
+<div class="document-table">
     <h1>Services</h1>
     <table>
         <tr>
@@ -57,4 +81,5 @@
             </tr>
         @endforeach
     </table>
+</div>
 @endsection

@@ -42,7 +42,7 @@
                             <input type="password" class="form__input"  id="password" name="password" required>
                         </div>
                     </div>
-                    <a href="{{ route('password.request') }}" class="form__forgot">Mot de passe oublié?</a>
+                    <!-- <a href="{{ route('password.request') }}" class="form__forgot">Mot de passe oublié?</a> -->
 
                     <input type="submit" class="form__button" value="Se connecter">
 

@@ -22,7 +22,8 @@ class ServiceController extends Controller
 
     // Count of new documents (pending status) for notifications
     $newDocumentsCount = Document::where('receiver_id', $userId)
-                                 ->where('status', 'pending')
+                                 ->where('status', 'read by dgs')
+                                 ->get()
                                  ->count();
 
      // Logging the values for debugging
@@ -35,7 +36,6 @@ class ServiceController extends Controller
     return view('service.index', compact('latestDocument', 'newDocumentsCount'));
 }
 
-
     // Received documents with search functionality
     public function receive(Request $request)
     {
@@ -44,7 +44,7 @@ class ServiceController extends Controller
 
         // Initialize query for received documents with status "read"
         $query = Document::where('receiver_id', $userId)
-                         ->where('status', 'read');
+                         ->where('status', 'read by dgs');
 
         // Filter documents by search input
         if ($request->filled('search')) {

@@ -19,19 +19,17 @@ class BureauController extends Controller
         $userId = Auth::id();
     
         // Fetch all pending documents that have been received by the Bureau d'Ordre (user)
-        $pendingDocuments = Document::where('receiver_id', $userId)
-                                    ->where('status', 'pending')
+        $pendingDocuments = Document::where('status', 'pending')
                                     ->orderBy('created_at', 'desc')
                                     ->get();
     
         // Count of unread documents for the Bureau d'Ordre
-        $newDocCount = Document::where('receiver_id', $userId)
-                               ->where('status', 'pending')
+        $newDocCount = Document::where('status', 'pending')
                                ->count();
     
         // Count of received documents by each service (role) for the Google Chart
         $serviceStats = Document::join('users', 'documents.sender_id', '=', 'users.id')
-                                ->where('documents.receiver_id', $userId)
+                                ->where('status', 'pending')
                                 ->selectRaw('users.role as sender_role, COUNT(*) as received_count')
                                 ->groupBy('users.role')
                                 ->pluck('received_count', 'sender_role')
@@ -40,18 +38,6 @@ class BureauController extends Controller
         return view('bureau.home', compact('pendingDocuments', 'newDocCount', 'serviceStats'));
     }
     
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -69,8 +55,7 @@ public function received()
     DB::enableQueryLog();
 
     // Fetch documents received by the Bureau d'Ordre with 'pending' status
-    $documents = Document::where('receiver_id', $userId)
-                         ->where('status','!=', 'forwarded')
+    $documents = Document::where('status','=', 'pending')
                          ->get();
 
     // Log the executed query
@@ -92,23 +77,13 @@ public function received()
 
 
 
-
-
-
-
-
-
-
-
-
-
     // Download the document and change its status to 'read by Bureau d'Ordre'
     public function download($id)
     {
         $document = Document::findOrFail($id);
 
         // Check if the logged-in user is authorized to download
-        if (Auth::id() == $document->receiver_id) {
+        if ($document->status=='pending') {
             // Update status to "read by Bureau d'Ordre"
             $document->update(['status' => 'read by Bureau d\'Ordre']);
 
@@ -117,16 +92,6 @@ public function received()
 
         return redirect()->back()->withErrors('Unauthorized access.');
     }
-
-
-
-
-
-
-
-
-
-
 
     // Forward the document to the General Director
     public function forward($id)
@@ -140,7 +105,7 @@ public function received()
         }
 
         // Forward document to the Director General (role "General Director")
-        $document->receiver_id = User::where('role', 'General Director')->first()->id;
+        // $document->receiver_id = User::where('role', 'General Director')->first()->id;
         $document->status = 'forwarded to dgs';
         $document->save();
 

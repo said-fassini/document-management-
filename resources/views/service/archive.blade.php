@@ -2,7 +2,68 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<style>
+
+
+
+/* Search bar and button */
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+ input {
+    padding: 8px 12px;
+    border-radius: 4px 0 0 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    width: 60%;
+    outline: none;
+}
+
+ button {
+    padding: 8px 16px;
+    background-color: #2a5298;
+    color: #fff;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+ button:hover {
+    background-color: #c0392b;
+}
+
+/* Document cards */
+
+ h3 {
+    font-size: 1.4rem;
+    color: #2643c4;
+    margin-bottom: 8px;
+}
+
+ p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+ a {
+    color: #2a5298;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+ a:hover {
+    color: #c0392b;
+}
+
+</style>
+<div class="card">
     <h1>Archived Documents</h1>
 
     {{-- Success Message --}}

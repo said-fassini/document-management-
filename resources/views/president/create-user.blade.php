@@ -52,52 +52,58 @@
 @endsection
 
 <style>
-    body {
-        background-color: #ecf0f1; /* Light background color for the entire page */
-        font-family: 'Arial', sans-serif; /* Font style for the page */
-    }
+
 
     .user-form {
-        max-width: 400px; /* Maximum width of the form */
+        background-color:#ffffff83;
+        max-width: 500px; /* Maximum width of the form */
         margin: 0 auto; /* Center the form */
-        padding: 20px; /* Padding inside the form */
+        padding: 10px; /* Padding inside the form */
         border-radius: 12px; /* Rounded corners */
-        background: linear-gradient(135deg, #3498db, #2ecc71); /* Gradient background */
+        border:none  ; /* Gradient background */
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Shadow for depth */
         animation: fadeIn 0.8s ease-in-out; /* Animation for form appearance */
-        border: 1px solid #2980b9; /* Border color */
+    
+        display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
     }
 
     .form-group {
-        margin-bottom: 20px; /* Spacing between form groups */
+        margin: 30px; /* Spacing between form groups */
     }
 
     label {
         display: block; /* Labels on a new line */
         margin-bottom: 8px; /* Spacing below labels */
         font-weight: bold; /* Bold labels */
-        color: #fff; /* White color for labels */
+        font-size: 18px;
+        color: rgb(65, 68, 108) ; /* White color for labels */
     }
 
     input[type="text"],
     input[type="email"],
     input[type="password"],
     select {
-        width: 100%; /* Full width for inputs */
-        padding: 12px; /* Padding inside inputs */
-        border: none; /* Remove default border */
-        border-radius: 4px; /* Rounded corners */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for inputs */
-        transition: all 0.3s ease; /* Smooth transition for border color */
+        
+        width: 400px;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-bottom: 1px solid #ccc; /* Adjust the border color as needed */
+        background-color: transparent;
+        outline: none;
     }
 
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    input[type="password"]:focus,
-    select:focus {
-        box-shadow: 0 0 5px #2ecc71; /* Glow effect on focus */
-        outline: none; /* Remove default outline */
+
+    input:focus {
+        border: none;
+        background-color: transparent;
+  border-color: blue;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     }
+   
 
     .password-container {
         position: relative; /* Positioning for the eye icon */
@@ -120,14 +126,16 @@
 
     .submit-button {
         padding: 12px 20px; /* Padding for the button */
-        background-color: #e74c3c; /* Button color */
+        background-color: #2a5298; /* Button color */
         color: #fff; /* Text color */
         border: none; /* Remove default border */
         border-radius: 4px; /* Rounded corners */
         cursor: pointer; /* Pointer cursor on hover */
         transition: background-color 0.3s, transform 0.3s; /* Smooth transition for background color */
-        animation: pulse 1s infinite; /* Animation for the button */
         font-size: 16px; /* Button text size */
+        display: flex;
+            justify-content: center;
+            align-items: center;
     }
 
     .submit-button:hover {

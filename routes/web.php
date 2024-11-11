@@ -8,6 +8,12 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;  
 
  
+
+use App\Http\Controllers\DgsController;
+
+
+
+
 // Define the route for the home dashboard
 //Prisident route
 Route::get('/home', [PresidentController::class, 'home'])->name('president.home');
@@ -47,4 +53,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/service/upload', [DocumentController::class, 'upload'])->name('service.upload.submit');
     Route::get('/documents/download/{id}', [DocumentController::class, 'download'])->name('documents.download');
     Route::patch('/documents/mark-as-read/{id}', [DocumentController::class, 'markAsRead'])->name('documents.markAsRead');
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dgs', [DgsController::class, 'home'])->name('dgs.home');
+    Route::get('/received', [DgsController::class, 'received'])->name('dgs.received');
+    Route::post('/received', [DgsController::class, 'received'])->name('dgs.received');
+    Route::post('/download/{id}', [DgsController::class, 'download'])->name('dgs.download');
+    Route::post('/forward/{id}', [DgsController::class, 'forward'])->name('dgs.forward');
+    Route::get('/archive', [DgsController::class, 'showArchive'])->name('dgs.archive');
 });

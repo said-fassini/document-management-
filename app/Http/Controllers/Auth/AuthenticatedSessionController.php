@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
                 case 'President':  
                     return redirect()->route('president.home'); // Admin dashboard  
                 case 'General Director':  
-                    return redirect()->route('dgs.dashboard'); // Editor dashboard  
+                    return redirect()->route('dgs.home'); // Editor dashboard  
                 case 'Bureau dOrdre':  
                     return redirect()->route('bureau.home'); // Editor dashboard  
                     case 'Service':  

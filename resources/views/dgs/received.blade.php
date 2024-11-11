@@ -5,7 +5,7 @@
     <h2>received</h2>
 
     <!-- Search Form -->
-    <form action="{{ route('bureau.received') }}" method="GET" class="search-form">
+    <form action="{{ route('dgs.received') }}" method="GET" class="search-form">
         <input type="text" name="query" placeholder="Search by title or content..." value="{{ request('query') }}">
         <input type="date" name="date" value="{{ request('date') }}">
         <input type="text" name="receiver" placeholder="Search by receiver..." value="{{ request('receiver') }}">
@@ -26,15 +26,20 @@
                     <p>statue: {{ $document->status }}</p>
 
                 <!-- زر التحميل -->
-                <form action="{{ route('bureau.download', $document->id) }}" method="POST" style="display: inline;">
+                <form action="{{ route('dgs.download', $document->id) }}" method="POST" style="display: inline;">
                     @csrf
                     <button type="submit" class="btn btn-primary">Download</button>
                 </form>
 
                 <!-- زر إعادة التوجيه -->
-                <form action="{{ route('bureau.forward', $document->id) }}" method="POST" style="display: inline;">
+                <form action="{{ route('dgs.forward', $document->id) }}" method="POST" style="display: inline;">
                     @csrf
-                    <button type="submit" class="btn btn-secondary">Forward to General Director</button>
+                    <select name="receiver_id" id="receiver_id">
+                    @foreach ($receivers as $receiver)
+                        <option value="{{ $receiver->id }}">{{ $receiver->name }}</option>
+                    @endforeach
+                </select>
+                    <button type="submit" class="btn btn-secondary">Forward</button>
                 </form>
             </div>
         @endforeach

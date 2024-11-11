@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<div>
-    <h2>Dashboard</h2>
+<div class="card">
 
     {{-- Notification section --}}
-    <p>New Documents: {{ $newDocumentsCount ?? 0 }}</p>
+    <p>New Documents: {{ $newDocumentsCount ?? 0}}</p>
 
     {{-- Display latest document received --}}
     <h3>Latest Document</h3>
@@ -18,16 +17,13 @@
         <p>No documents received recently.</p>
     @endif
 
-    {{-- Calendar and Note-taking section --}}
-    <h3>Calendar and Notes</h3>
-    <div>
-        <label for="note-date">Select Date:</label>
-        <input type="date" id="note-date" name="note_date">
-
-        <label for="note-content">Note:</label>
-        <textarea id="note-content" name="note_content" placeholder="Write your note here..."></textarea>
-
-        <button onclick="saveNote()">Save Note</button>
-    </div>
+    <div class="cal-todo-cards">
+                @include('layouts.calendar')
+                <div class="todo">
+                 @include('layouts.todo')   
+                </div>
+                
+        
+        </div>
 </div>
 @endsection

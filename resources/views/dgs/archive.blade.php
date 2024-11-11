@@ -89,7 +89,7 @@
     <h2>Archive</h2>
     
     <!-- Search Form -->
-    <form method="GET" action="{{ route('bureau.archive') }}">
+    <form method="GET" action="{{ route('dgs.archive') }}">
         <input type="text" name="search" placeholder="Search by title, content, or date">
         <button type="submit">Search</button>
     </form>
@@ -110,7 +110,7 @@
                             <p>Date: {{ $document->created_at->format('Y-m-d') }}</p>
                             
                             <!-- Download button -->
-                            <form action="{{ route('bureau.download', $document->id) }}" method="POST" style="display: inline;">
+                            <form action="{{ route('dgs.download', $document->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-primary">Download</button>
                             </form>

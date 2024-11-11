@@ -3,202 +3,76 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-    <style>
-        
- /* resources/css/dashboard.css */
-
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #2b2b36; /* Dark background */
-    background: linear-gradient(to bottom, #2b2b36, #1d1d26); /* Dark gradient */
-    color: #dcdcdc; /* Light text for contrast */
-}
-
-.sidebar {
-    background-color: #2a3b4d; /* Cool dark blue for sidebar */
-    color: white;
-    width: 200px;
-    height: 100vh;
-    position: fixed;
-    transition: width 0.3s ease, background-color 0.5s ease, transform 0.5s ease; 
-    overflow: hidden;
-    transform: translateX(-200px); /* Start hidden */
-    animation: slideIn 0.5s forwards; /* Slide in animation */
-}
-
-.sidebar h2 {
-    text-align: center;
-    padding: 15px 0;
-    font-size: 24px; /* Increased font size for header */
-    color: #ffffff; /* Light text */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Added text shadow for depth */
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar ul li {
-    margin: 20px 0;
-    text-align: center;
-}
-
-.sidebar ul li a {
-    color: #dcdcdc; /* Light text */
-    text-decoration: none;
-    font-size: 18px;
-    display: block;
-    padding: 10px 15px; /* Added padding for better click area */
-    transition: background-color 0.3s, transform 0.3s; /* Added transform transition */
-}
-
-.sidebar ul li a:hover {
-    background-color: #4c6b8f; /* Lighter blue on hover */
-    transform: scale(1.05);
-}
-
-.content {
-    margin-left: 220px; /* Space for sidebar */
-    padding: 20px;
-    background-color: #2b2b36; /* Matching background */
-}
-
-.header {
-    display: flex;
-    justify-content: flex-start;
-    background-color: #2a3b4d; /* Dark blue header */
-    padding: 10px;
-}
-
-.logout-button {
-    background-color: #3d5b7c; /* Darker teal button */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-.logout-button:hover {
-    background-color: #66a2c1; /* Lighter teal on hover */
-    transform: scale(1.05);
-}
-
-h1, h2 {
-    color: #ffffff; /* Light text */
-    transition: color 0.3s ease;
-}
-
-h1:hover, h2:hover {
-    color: #66a2c1; /* Accent color on hover */
-}
-
-/* Animations */
-@keyframes slideIn {
-    from {
-        transform: translateX(-200px); /* Start hidden */
-    }
-    to {
-        transform: translateX(0); /* Slide in to visible */
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.content {
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.card {
-    background: #1e1e2f; /* Dark card background */
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); /* Stronger shadow for dark theme */
-    margin: 15px 0;
-    padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    color: #dcdcdc; /* Light text */
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Deeper shadow on hover */
-}
-
-/* Google Chart styles (if used) */
-.chart {
-    width: 100%;
-    height: 400px;
-}
-
-.latest-users-cards {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.latest-users-cards .card {
-    flex: 1;
-    margin: 10px;
-    padding: 20px;
-    background-color: #252533; /* Darker card */
-    border: 1px solid #333; /* Darker border */
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    color: #ffffff; /* Light text */
-}
-
-.latest-users-cards .card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); /* Deeper shadow on hover */
-}
-
-    </style>
-
-    </style>
-    <div class="header">
-        <button class="logout-button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            Logout
-        </button>
-    </div>
-
-    <div class="sidebar">
-        @if (auth()->check() && auth()->user()->role === 'President')
-            @include('president.sidebar')
-        @elseif (auth()->check() && auth()->user()->role === "Bureau dOrdre") Bureau dOrdre
-            @include('bureau.sidebar')
-    
-        @elseif (auth()->check() && auth()->user()->role === "Service")
-            @include('service.Sidebar')
-        @else
-            <p>No sidebar available for this role.</p>
-        @endif
-    </div>
-
+<body>
+    @include('layouts.sidebar')
+    <!-- Main Content -->
     <div class="content">
-        @yield('content')
+        <div class="header">
+            <h1>{{ Auth::user()->name }}'s Dashboard</h1>
+            <div class="button-group">
+                 <button id="theme-toggle" class="logout-button">
+                    <!-- Icône de mode clair par défaut -->
+                    <svg id="light-mode-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffff" style="display: none;">
+                        <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/>
+                    </svg>
+                    <!-- Icône de mode sombre -->
+                    <svg id="dark-mode-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368">
+                        <path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/>
+                    </svg>
+                </button>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="logout-button">Logout</button>
+                </form>
+               
+            </div>
+        </div>
+        
+            @yield('content')
+      
+
     </div>
 
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-        @csrf
-    </form>
-    
+    @yield('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggleButton = document.getElementById('theme-toggle');
+            const darkModeIcon = document.getElementById('dark-mode-icon');
+            const lightModeIcon = document.getElementById('light-mode-icon');
+
+            // Fonction pour mettre à jour l'icône du bouton
+            function updateButtonIcon() {
+                if (document.body.classList.contains('dark-mode')) {
+                    darkModeIcon.style.display = 'none';
+                    lightModeIcon.style.display = 'inline';
+                } else {
+                    darkModeIcon.style.display = 'inline';
+                    lightModeIcon.style.display = 'none';
+                }
+            }
+
+            // Basculer le mode sombre et mettre à jour l'icône
+            themeToggleButton.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                updateButtonIcon();
+
+                // Sauvegarde la préférence dans le localStorage
+                if (document.body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // Applique le thème choisi lors du chargement de la page
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            updateButtonIcon(); // Met à jour l'icône au chargement
+        });
+    </script>
 </body>
 </html>

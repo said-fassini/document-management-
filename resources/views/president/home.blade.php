@@ -33,7 +33,20 @@
     @else
         <p>No data available for document statistics.</p> {{-- رسالة توضح عدم وجود بيانات --}}
     @endif
+
+
+    <div class="cal-todo-cards">
+                @include('layouts.calendar')
+                <div class="todo">
+                 @include('layouts.todo')   
+                </div>
+                
+        
+</div>
+
 @endsection
+
+      
 
 @section('scripts')
 @if ($sentDocumentsPerService->isNotEmpty() || !empty($receivedCounts))
@@ -47,7 +60,7 @@
             ['Service', 'Documents'],
             @foreach ($sentDocumentsPerService as $service)
                 var received = {{ isset($receivedCounts[$service->sender_id]) ? $receivedCounts[$service->sender_id] : 0 }};
-                ['Service {{ $service->sender_id }}', {{ $service->total_sent + $received }}],
+                ['Service {{ $service->sender_id }}', {{ $service->total_sent  }}],
             @endforeach
         ]);
 
@@ -69,4 +82,6 @@
     }
 </script>
 @endif
+
+
 @endsection

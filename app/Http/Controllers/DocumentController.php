@@ -18,6 +18,94 @@ class DocumentController extends Controller
     $documents = Document::all(); // Fetch all documents or add any specific conditions
     return view('president.view_docs', compact('documents'));
    }
+
+
+ // Show the upload form
+    public function showUploadForm()
+    {
+        // Get users with the 'service' role to populate receiver dropdown
+        $receivers = User::where('role', 'Service')->get();
+        return view('service.upload', compact('receivers'));
+    }
+
+ // Handle document upload
+    public function upload(Request $request)
+    {
+    // Validate the request
+        $request->validate([
+            'file' => 'required|mimes:pdf|max:2048',
+            'description' => 'required|string',
+            'receiver_id' => 'required|exists:users,id'  // Ensure receiver exists
+        ]);
+
+        // Get the current date and create a sequential document title
+        $datePrefix = now()->format('Ymd');
+        $senderId = Auth::id();
+
+        // Get the last document to create a sequential title
+        $lastDocument = Document::where('title', 'like', "$datePrefix-$senderId-%")
+                                ->orderBy('id', 'desc')
+                                ->first();
+        $newSequence = $lastDocument ? ((int) str_replace([$datePrefix . '-' . $senderId . '-', '.pdf'], '', $lastDocument->title) + 1) : 1;
+        $title = "$datePrefix-$senderId-$newSequence.pdf";
+
+        // Find Bureau d'Ordre user
+        $bureauDOrder = User::where('role', 'Bureau dOrdre')->first();
+        if (!$bureauDOrder) {
+            return redirect()->back()->withErrors('Error: Bureau d\'Ordre user not found.');
+        }
+
+        $finalReceiverId = $request->receiver_id;  // Final receiver selected by user
+
+        // Handle file upload
+        if ($request->hasFile('file')) {
+            // Store the file and get the file path
+            $filePath = $request->file('file')->storeAs('documents', $title, 'public');  // Store file in 'public/documents'
+
+            // Ensure the file path is correctly stored
+            Log::info("File uploaded successfully, file path: " . $filePath);
+
+            // Create a new document entry in the database with the file path
+            Document::create([
+                'title' => $title,
+                'description' => $request->description,
+                'file_path' => $filePath,  // Store the file path in the database
+                'sender_id' => $senderId,
+                'receiver_id' => $finalReceiverId,  // Bureau d'Ordre as intermediary
+                'status' => 'pending'
+            ]);
+
+            return redirect()->route('service.upload')->with('success', 'Document uploaded successfully');
+        } else {
+            return redirect()->back()->withErrors('Error: Failed to upload file.');
+        }
+    }
+
+
+
+    // Download the document
+    public function download($id)
+    {
+        $document = Document::findOrFail($id);
+
+        // تحديث حالة المستند عند التنزيل
+        if (Auth::id() == $document->receiver_id && $document->status == 'pending') {
+            $document->update(['status' => 'read', 'archived' => true]);
+        }
+
+        // تنزيل الملف باستخدام مسار الملف المخزن
+        $filePath = storage_path("app/public/" . $document->file_path);
+
+        if (file_exists($filePath)) {
+            return response()->download($filePath, $document->title);
+        } else {
+            return redirect()->back()->withErrors("الملف غير موجود.");
+        }
+    }
+
+
+
+
 // public function showUploadForm()
 // {
 //     return view('documents.upload'); // The view file for the upload form
@@ -89,94 +177,11 @@ class DocumentController extends Controller
 
 
 
-    // Show the upload form
-    public function showUploadForm()
-    {
-        // Get users with the 'service' role to populate receiver dropdown
-        $receivers = User::where('role', 'Service')->get();
-        return view('service.upload', compact('receivers'));
-    }
-
-
-
+   
 
 
     
 
-    // Handle document upload
-    public function upload(Request $request)
-{
-    // Validate the request
-    $request->validate([
-        'file' => 'required|mimes:pdf|max:2048',
-        'description' => 'required|string',
-        'receiver_id' => 'required|exists:users,id'  // Ensure receiver exists
-    ]);
-
-    // Get the current date and create a sequential document title
-    $datePrefix = now()->format('Ymd');
-    $senderId = Auth::id();
-
-    // Get the last document to create a sequential title
-    $lastDocument = Document::where('title', 'like', "$datePrefix-$senderId-%")
-                            ->orderBy('id', 'desc')
-                            ->first();
-    $newSequence = $lastDocument ? ((int) str_replace([$datePrefix . '-' . $senderId . '-', '.pdf'], '', $lastDocument->title) + 1) : 1;
-    $title = "$datePrefix-$senderId-$newSequence.pdf";
-
-    // Find Bureau d'Ordre user
-    $bureauDOrder = User::where('role', 'Bureau dOrdre')->first();
-    if (!$bureauDOrder) {
-        return redirect()->back()->withErrors('Error: Bureau d\'Ordre user not found.');
-    }
-
-    $intermediaryReceiverId = $bureauDOrder->id;  // Bureau d'Ordre as intermediary
-    $finalReceiverId = $request->receiver_id;  // Final receiver selected by user
-
-    // Handle file upload
-    if ($request->hasFile('file')) {
-        // Store the file and get the file path
-        $filePath = $request->file('file')->storeAs('documents', $title, 'public');  // Store file in 'public/documents'
-
-        // Ensure the file path is correctly stored
-        Log::info("File uploaded successfully, file path: " . $filePath);
-
-        // Create a new document entry in the database with the file path
-        Document::create([
-            'title' => $title,
-            'description' => $request->description,
-            'file_path' => $filePath,  // Store the file path in the database
-            'sender_id' => $senderId,
-            'receiver_id' => $intermediaryReceiverId,  // Bureau d'Ordre as intermediary
-            'final_receiver_id' => $finalReceiverId,  // Final receiver
-            'status' => 'pending'
-        ]);
-
-        return redirect()->route('service.upload')->with('success', 'Document uploaded successfully');
-    } else {
-        return redirect()->back()->withErrors('Error: Failed to upload file.');
-    }
+   
 }
-
-
-
-    // Download the document
-public function download($id)
-{
-    $document = Document::findOrFail($id);
-
-    // تحديث حالة المستند عند التنزيل
-    if (Auth::id() == $document->receiver_id && $document->status == 'pending') {
-        $document->update(['status' => 'read', 'archived' => true]);
-    }
-
-    // تنزيل الملف باستخدام مسار الملف المخزن
-    $filePath = storage_path("app/public/" . $document->file_path);
-
-    if (file_exists($filePath)) {
-        return response()->download($filePath, $document->title);
-    } else {
-        return redirect()->back()->withErrors("الملف غير موجود.");
-    }
-}}
 
