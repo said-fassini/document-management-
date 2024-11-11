@@ -1,10 +1,10 @@
 
 RUN THOSE COMANDS AFTER PULLING THE PROJECT:
-composer require laravel/fortify
-php artisan fortify:install
-php artisan migrate
-php artisan db:seed --class=UserSeeder
-php artisan storage:link
+* composer require laravel/fortify ;
+* php artisan fortify:install ;
+* php artisan migrate ;
+* php artisan db:seed --class=UserSeeder ;
+* php artisan storage:link ;
 
 
 
